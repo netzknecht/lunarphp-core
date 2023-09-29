@@ -8,10 +8,17 @@ use Lunar\Base\Traits\HasDefaultRecord;
 use Lunar\Base\Traits\HasMacros;
 use Lunar\Database\Factories\TaxClassFactory;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property bool $default
+ * @property ?\Illuminate\Support\Carbon $created_at
+ * @property ?\Illuminate\Support\Carbon $updated_at
+ */
 class TaxClass extends BaseModel
 {
-    use HasFactory;
     use HasDefaultRecord;
+    use HasFactory;
     use HasMacros;
 
     public static function booted()
@@ -35,8 +42,6 @@ class TaxClass extends BaseModel
 
     /**
      * Return a new factory instance for the model.
-     *
-     * @return \Lunar\Database\Factories\TaxClassFactory
      */
     protected static function newFactory(): TaxClassFactory
     {

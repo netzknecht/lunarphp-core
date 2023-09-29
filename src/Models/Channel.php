@@ -11,18 +11,26 @@ use Lunar\Base\Traits\HasMacros;
 use Lunar\Base\Traits\LogsActivity;
 use Lunar\Database\Factories\ChannelFactory;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $handle
+ * @property bool $default
+ * @property ?string $url
+ * @property ?\Illuminate\Support\Carbon $created_at
+ * @property ?\Illuminate\Support\Carbon $updated_at
+ * @property ?\Illuminate\Support\Carbon $deleted_at
+ */
 class Channel extends BaseModel
 {
-    use HasFactory;
-    use SoftDeletes;
-    use LogsActivity;
     use HasDefaultRecord;
+    use HasFactory;
     use HasMacros;
+    use LogsActivity;
+    use SoftDeletes;
 
     /**
      * Return a new factory instance for the model.
-     *
-     * @return \Lunar\Database\Factories\ChannelFactory
      */
     protected static function newFactory(): ChannelFactory
     {

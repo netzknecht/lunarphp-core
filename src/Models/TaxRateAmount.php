@@ -7,6 +7,14 @@ use Lunar\Base\BaseModel;
 use Lunar\Base\Traits\HasMacros;
 use Lunar\Database\Factories\TaxRateAmountFactory;
 
+/**
+ * @property int $id
+ * @property ?int $tax_class_id
+ * @property ?int $tax_rate_id
+ * @property float $percentage
+ * @property ?\Illuminate\Support\Carbon $created_at
+ * @property ?\Illuminate\Support\Carbon $updated_at
+ */
 class TaxRateAmount extends BaseModel
 {
     use HasFactory;
@@ -21,8 +29,6 @@ class TaxRateAmount extends BaseModel
 
     /**
      * Return a new factory instance for the model.
-     *
-     * @return \Lunar\Database\Factories\TaxRateAmountFactory
      */
     protected static function newFactory(): TaxRateAmountFactory
     {

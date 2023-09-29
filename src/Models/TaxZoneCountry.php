@@ -7,6 +7,13 @@ use Lunar\Base\BaseModel;
 use Lunar\Base\Traits\HasMacros;
 use Lunar\Database\Factories\TaxZoneCountryFactory;
 
+/**
+ * @property int $id
+ * @property ?int $tax_zone_id
+ * @property ?int $country_id
+ * @property ?\Illuminate\Support\Carbon $created_at
+ * @property ?\Illuminate\Support\Carbon $updated_at
+ */
 class TaxZoneCountry extends BaseModel
 {
     use HasFactory;
@@ -14,8 +21,6 @@ class TaxZoneCountry extends BaseModel
 
     /**
      * Return a new factory instance for the model.
-     *
-     * @return \Lunar\Database\Factories\TaxZoneCountryFactory
      */
     protected static function newFactory(): TaxZoneCountryFactory
     {

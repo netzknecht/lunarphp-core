@@ -7,6 +7,13 @@ use Lunar\Base\BaseModel;
 use Lunar\Base\Traits\HasMacros;
 use Lunar\Database\Factories\CollectionGroupFactory;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $handle
+ * @property ?\Illuminate\Support\Carbon $created_at
+ * @property ?\Illuminate\Support\Carbon $updated_at
+ */
 class CollectionGroup extends BaseModel
 {
     use HasFactory;
@@ -16,8 +23,6 @@ class CollectionGroup extends BaseModel
 
     /**
      * Return a new factory instance for the model.
-     *
-     * @return \Lunar\Database\Factories\CollectionGroupFactory
      */
     protected static function newFactory(): CollectionGroupFactory
     {

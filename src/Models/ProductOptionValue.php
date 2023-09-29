@@ -11,12 +11,20 @@ use Lunar\Base\Traits\HasTranslations;
 use Lunar\Database\Factories\ProductOptionValueFactory;
 use Spatie\MediaLibrary\HasMedia as SpatieHasMedia;
 
+/**
+ * @property int $id
+ * @property int $product_option_id
+ * @property string $name
+ * @property int $position
+ * @property ?\Illuminate\Support\Carbon $created_at
+ * @property ?\Illuminate\Support\Carbon $updated_at
+ */
 class ProductOptionValue extends BaseModel implements SpatieHasMedia
 {
     use HasFactory;
+    use HasMacros;
     use HasMedia;
     use HasTranslations;
-    use HasMacros;
 
     /**
      * Define which attributes should be cast.
@@ -29,8 +37,6 @@ class ProductOptionValue extends BaseModel implements SpatieHasMedia
 
     /**
      * Return a new factory instance for the model.
-     *
-     * @return \Lunar\Database\Factories\ProductOptionValueFactory
      */
     protected static function newFactory(): ProductOptionValueFactory
     {

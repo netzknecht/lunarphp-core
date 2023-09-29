@@ -8,10 +8,18 @@ use Lunar\Base\Traits\HasDefaultRecord;
 use Lunar\Base\Traits\HasMacros;
 use Lunar\Database\Factories\CustomerGroupFactory;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $handle
+ * @property bool $default
+ * @property ?\Illuminate\Support\Carbon $created_at
+ * @property ?\Illuminate\Support\Carbon $updated_at
+ */
 class CustomerGroup extends BaseModel
 {
-    use HasFactory;
     use HasDefaultRecord;
+    use HasFactory;
     use HasMacros;
 
     /**
@@ -21,8 +29,6 @@ class CustomerGroup extends BaseModel
 
     /**
      * Return a new factory instance for the model.
-     *
-     * @return \Lunar\Database\Factories\CustomerGroupFactory
      */
     protected static function newFactory(): CustomerGroupFactory
     {

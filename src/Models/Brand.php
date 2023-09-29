@@ -5,38 +5,34 @@ namespace Lunar\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Lunar\Base\BaseModel;
+use Lunar\Base\Casts\AsAttributeData;
+use Lunar\Base\Traits\HasAttributes;
 use Lunar\Base\Traits\HasMacros;
 use Lunar\Base\Traits\HasMedia;
+use Lunar\Base\Traits\HasTranslations;
 use Lunar\Base\Traits\HasUrls;
 use Lunar\Base\Traits\LogsActivity;
 use Lunar\Base\Traits\Searchable;
 use Lunar\Database\Factories\BrandFactory;
 use Spatie\MediaLibrary\HasMedia as SpatieHasMedia;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property ?array $attribute_data
+ * @property ?\Illuminate\Support\Carbon $created_at
+ * @property ?\Illuminate\Support\Carbon $updated_at
+ */
 class Brand extends BaseModel implements SpatieHasMedia
 {
-    use HasFactory,
+    use HasAttributes,
+        HasFactory,
+        HasMacros,
         HasMedia,
+        HasTranslations,
         HasUrls,
-        Searchable,
         LogsActivity,
-        HasMacros;
-
-    /**
-     * Define our base filterable attributes.
-     *
-     * @var array
-     */
-    protected $filterable = [];
-
-    /**
-     * Define our base sortable attributes.
-     *
-     * @var array
-     */
-    protected $sortable = [
-        'name',
-    ];
+        Searchable;
 
     /**
      * {@inheritDoc}
@@ -44,9 +40,14 @@ class Brand extends BaseModel implements SpatieHasMedia
     protected $guarded = [];
 
     /**
+     * {@inheritDoc}
+     */
+    protected $casts = [
+        'attribute_data' => AsAttributeData::class,
+    ];
+
+    /**
      * Return a new factory instance for the model.
-     *
-     * @return \Lunar\Database\Factories\BrandFactory
      */
     protected static function newFactory(): BrandFactory
     {
@@ -54,32 +55,23 @@ class Brand extends BaseModel implements SpatieHasMedia
     }
 
     /**
-     * Get the name of the index associated with the model.
+     * Get the mapped attributes relation.
      *
-     * @return string
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
-    public function searchableAs(): string
+    public function mappedAttributes()
     {
-        return config('scout.prefix').'brands';
-    }
+        $prefix = config('lunar.database.table_prefix');
 
-    /**
-     * Return our base (core) attributes we want searchable.
-     *
-     * @return array
-     */
-    public function getSearchableAttributes()
-    {
-        return [
-            'id' => $this->id,
-            'name' => $this->name,
-        ];
+        return $this->morphToMany(
+            Attribute::class,
+            'attributable',
+            "{$prefix}attributables"
+        )->withTimestamps();
     }
 
     /**
      * Return the product relationship.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function products(): HasMany
     {

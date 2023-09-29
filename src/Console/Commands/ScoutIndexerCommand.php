@@ -4,7 +4,7 @@ namespace Lunar\Console\Commands;
 
 use Illuminate\Console\Command;
 
-class ScoutIndexer extends Command
+class ScoutIndexerCommand extends Command
 {
     /**
      * The name and signature of the console command.
@@ -38,7 +38,6 @@ class ScoutIndexer extends Command
      * Executes the re-index of the informed models.
      *
      * @param  array  $models  Models array for indexing
-     * @return void
      */
     private function indexer(array $models): void
     {

@@ -8,6 +8,12 @@ use Lunar\Base\Traits\HasAttributes;
 use Lunar\Base\Traits\HasMacros;
 use Lunar\Database\Factories\ProductTypeFactory;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property ?\Illuminate\Support\Carbon $created_at
+ * @property ?\Illuminate\Support\Carbon $updated_at
+ */
 class ProductType extends BaseModel
 {
     use HasAttributes;
@@ -16,8 +22,6 @@ class ProductType extends BaseModel
 
     /**
      * Return a new factory instance for the model.
-     *
-     * @return \Lunar\Database\Factories\ProductTypeFactory
      */
     protected static function newFactory(): ProductTypeFactory
     {

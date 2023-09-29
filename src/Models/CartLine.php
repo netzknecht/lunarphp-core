@@ -2,6 +2,7 @@
 
 namespace Lunar\Models;
 
+use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Lunar\Base\BaseModel;
 use Lunar\Base\Traits\CachesProperties;
@@ -11,12 +12,22 @@ use Lunar\Base\ValueObjects\Cart\TaxBreakdown;
 use Lunar\Database\Factories\CartLineFactory;
 use Lunar\DataTypes\Price;
 
+/**
+ * @property int $id
+ * @property int $cart_id
+ * @property string $purchasable_type
+ * @property int $purchasable_id
+ * @property int $quantity
+ * @property ?array $meta
+ * @property ?\Illuminate\Support\Carbon $created_at
+ * @property ?\Illuminate\Support\Carbon $updated_at
+ */
 class CartLine extends BaseModel
 {
-    use HasFactory;
-    use LogsActivity;
-    use HasMacros;
     use CachesProperties;
+    use HasFactory;
+    use HasMacros;
+    use LogsActivity;
 
     /**
      * Array of cachable class properties.
@@ -35,57 +46,46 @@ class CartLine extends BaseModel
 
     /**
      * The cart line unit price.
-     *
-     * @var null|Price
      */
     public ?Price $unitPrice = null;
 
     /**
      * The cart line sub total.
-     *
-     * @var null|Price
      */
     public ?Price $subTotal = null;
 
     /**
+     * The discounted sub total
+     */
+    public ?Price $subTotalDiscounted = null;
+
+    /**
      * The discount total.
-     *
-     * @var null|Price
      */
     public ?Price $discountTotal = null;
 
     /**
      * The cart line tax amount.
-     *
-     * @var null|Price
      */
     public ?Price $taxAmount = null;
 
     /**
      * The cart line total.
-     *
-     * @var null|Price
      */
     public ?Price $total = null;
 
     /**
      * The promotion description.
-     *
-     * @var string
      */
     public string $promotionDescription = '';
 
     /**
      * All the tax breakdowns for the cart line.
-     *
-     * @var \Lunar\Base\ValueObjects\Cart\TaxBreakdown
      */
     public TaxBreakdown $taxBreakdown;
 
     /**
      * Return a new factory instance for the model.
-     *
-     * @return \Lunar\Database\Factories\CartLineFactory
      */
     protected static function newFactory(): CartLineFactory
     {
@@ -107,7 +107,7 @@ class CartLine extends BaseModel
      */
     protected $casts = [
         'quantity' => 'integer',
-        'meta' => 'object',
+        'meta' => AsArrayObject::class,
     ];
 
     /**

@@ -6,6 +6,11 @@ use Lunar\Base\BaseModel;
 use Lunar\Base\Traits\HasMedia as TraitsHasMedia;
 use Spatie\MediaLibrary\HasMedia;
 
+/**
+ * @property int $id
+ * @property ?\Illuminate\Support\Carbon $created_at
+ * @property ?\Illuminate\Support\Carbon $updated_at
+ */
 class Asset extends BaseModel implements HasMedia
 {
     use TraitsHasMedia;
@@ -18,6 +23,11 @@ class Asset extends BaseModel implements HasMedia
      */
     protected $guarded = [];
 
+    /**
+     * Get the associated file.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+     */
     public function file()
     {
         return $this->morphOne(config('media-library.media_model'), 'model');

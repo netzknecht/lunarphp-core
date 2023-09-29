@@ -12,12 +12,27 @@ use Lunar\Base\Traits\HasCustomerGroups;
 use Lunar\Base\Traits\HasTranslations;
 use Lunar\Database\Factories\DiscountFactory;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $handle
+ * @property ?string $coupon
+ * @property string $type
+ * @property \Illuminate\Support\Carbon $starts_at
+ * @property \Illuminate\Support\Carbon $ends_at
+ * @property int $uses
+ * @property ?int $max_uses
+ * @property int $priority
+ * @property bool $stop
+ * @property ?\Illuminate\Support\Carbon $created_at
+ * @property ?\Illuminate\Support\Carbon $updated_at
+ */
 class Discount extends BaseModel
 {
-    use HasFactory,
-        HasTranslations,
-        HasChannels,
-        HasCustomerGroups;
+    use HasChannels,
+        HasCustomerGroups,
+        HasFactory,
+        HasTranslations;
 
     protected $guarded = [];
 
@@ -34,12 +49,20 @@ class Discount extends BaseModel
 
     /**
      * Return a new factory instance for the model.
-     *
-     * @return DiscountFactory
      */
     protected static function newFactory(): DiscountFactory
     {
         return DiscountFactory::new();
+    }
+
+    public function users()
+    {
+        $prefix = config('lunar.database.table_prefix');
+
+        return $this->belongsToMany(
+            config('auth.providers.users.model'),
+            "{$prefix}discount_user"
+        )->withTimestamps();
     }
 
     /**
@@ -56,7 +79,7 @@ class Discount extends BaseModel
     {
         return $this->hasMany(DiscountPurchasable::class)->whereType('condition');
     }
-    
+
     public function purchasableLimitations()
     {
         return $this->hasMany(DiscountPurchasable::class)->whereType('limitation');
@@ -89,8 +112,6 @@ class Discount extends BaseModel
 
     /**
      * Return the customer groups relationship.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function customerGroups(): BelongsToMany
     {
@@ -120,8 +141,7 @@ class Discount extends BaseModel
     /**
      * Return the active scope.
      *
-     * @param  Builder  $query
-     * @return void
+     * @return Builder
      */
     public function scopeActive(Builder $query)
     {
@@ -131,5 +151,37 @@ class Discount extends BaseModel
                 $query->whereNull('ends_at')
                     ->orWhere('ends_at', '>', now());
             });
+    }
+
+    /**
+     * Return the products scope.
+     *
+     * @return Builder
+     */
+    public function scopeProducts(Builder $query, iterable $productIds = [], string $type = null)
+    {
+        if (is_array($productIds)) {
+            $productIds = collect($productIds);
+        }
+
+        return $query->where(
+            fn ($subQuery) => $subQuery->whereDoesntHave('purchasables')
+                ->orWhereHas('purchasables',
+                    fn ($relation) => $relation->whereIn('purchasable_id', $productIds)
+                        ->wherePurchasableType(Product::class)
+                        ->when(
+                            $type,
+                            fn ($query) => $query->whereType($type)
+                        )
+                )
+        );
+    }
+
+    public function scopeUsable(Builder $query)
+    {
+        return $query->where(function ($subQuery) {
+            $subQuery->whereRaw('uses < max_uses')
+                ->orWhereNull('max_uses');
+        });
     }
 }

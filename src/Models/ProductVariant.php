@@ -13,16 +13,46 @@ use Lunar\Base\Traits\HasPrices;
 use Lunar\Base\Traits\HasTranslations;
 use Lunar\Base\Traits\LogsActivity;
 use Lunar\Database\Factories\ProductVariantFactory;
+use Spatie\LaravelBlink\BlinkFacade as Blink;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
+/**
+ * @property int $id
+ * @property int $product_id
+ * @property int $tax_class_id
+ * @property array $attribute_data
+ * @property ?string $tax_ref
+ * @property int $unit_quantity
+ * @property ?string $sku
+ * @property ?string $gtin
+ * @property ?string $mpn
+ * @property ?string $ean
+ * @property ?float $length_value
+ * @property ?string $length_unit
+ * @property ?float $width_value
+ * @property ?string $width_unit
+ * @property ?float $height_value
+ * @property ?string $height_unit
+ * @property ?float $weight_value
+ * @property ?string $weight_unit
+ * @property ?float $volume_value
+ * @property ?string $volume_unit
+ * @property bool $shippable
+ * @property int $stock
+ * @property int $backorder
+ * @property string $purchasable
+ * @property ?\Illuminate\Support\Carbon $created_at
+ * @property ?\Illuminate\Support\Carbon $updated_at
+ * @property ?\Illuminate\Support\Carbon $deleted_at
+ */
 class ProductVariant extends BaseModel implements Purchasable
 {
-    use HasFactory;
-    use HasPrices;
-    use LogsActivity;
     use HasDimensions;
-    use HasTranslations;
+    use HasFactory;
     use HasMacros;
+    use HasPrices;
+    use HasTranslations;
+    use LogsActivity;
 
     /**
      * Define the guarded attributes.
@@ -41,8 +71,6 @@ class ProductVariant extends BaseModel implements Purchasable
 
     /**
      * Return a new factory instance for the model.
-     *
-     * @return \Lunar\Database\Factories\ProductVariantFactory
      */
     protected static function newFactory(): ProductVariantFactory
     {
@@ -93,8 +121,6 @@ class ProductVariant extends BaseModel implements Purchasable
 
     /**
      * Return the unit quantity for the variant.
-     *
-     * @return int
      */
     public function getUnitQuantity(): int
     {
@@ -103,12 +129,12 @@ class ProductVariant extends BaseModel implements Purchasable
 
     /**
      * Return the tax class.
-     *
-     * @return \Lunar\Models\TaxClass
      */
     public function getTaxClass(): TaxClass
     {
-        return $this->taxClass;
+        return Blink::once("tax_class_{$this->tax_class_id}", function () {
+            return $this->taxClass;
+        });
     }
 
     public function getTaxReference()
@@ -176,12 +202,8 @@ class ProductVariant extends BaseModel implements Purchasable
 
     public function getThumbnail()
     {
-        $thumbnail = $this->images()->wherePivot('primary', true)?->first();
-
-        if (! $thumbnail) {
-            return $this->product->thumbnail;
-        }
-
-        return $thumbnail;
+        return $this->images->first(function ($media) {
+            return (bool) $media->pivot?->primary;
+        }) ?: $this->product->thumbnail;
     }
 }

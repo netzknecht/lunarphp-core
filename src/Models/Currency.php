@@ -10,12 +10,23 @@ use Lunar\Base\Traits\HasMacros;
 use Lunar\Base\Traits\LogsActivity;
 use Lunar\Database\Factories\CurrencyFactory;
 
+/**
+ * @property int $id
+ * @property string $code
+ * @property string $name
+ * @property float $exchange_rate
+ * @property int $decimal_places
+ * @property bool $enabled
+ * @property bool $default
+ * @property ?\Illuminate\Support\Carbon $created_at
+ * @property ?\Illuminate\Support\Carbon $updated_at
+ */
 class Currency extends BaseModel
 {
-    use HasFactory;
-    use LogsActivity;
     use HasDefaultRecord;
+    use HasFactory;
     use HasMacros;
+    use LogsActivity;
 
     /**
      * Define which attributes should be
@@ -27,8 +38,6 @@ class Currency extends BaseModel
 
     /**
      * Return a new factory instance for the model.
-     *
-     * @return \Lunar\Database\Factories\CurrencyFactory
      */
     protected static function newFactory(): CurrencyFactory
     {
